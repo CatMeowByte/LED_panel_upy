@@ -50,7 +50,7 @@ def main():
 led.run(ba, main)
 ```
 
-The `hold()` function is a convenient utility for adding a mandatory asyncio pause without the need to import asyncio into the main code. It allows you to add a pause in seconds, including float, or leave it empty for the shortest possible pause.
+The `hold()` function is a convenient utility for adding a mandatory asyncio pause without the need to import asyncio into the main code. It allows to add a pause in seconds, including float and fractions, or leave it empty for the shortest possible pause.
 
 ## License
 
