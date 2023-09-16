@@ -7,12 +7,13 @@ A Minimal MicroPython driver module for Panel P10 32*16 Matrix display and its v
 ## Usage Example
 
 ```python
-from led_panel import LEDPanel
 from framebuf import FrameBuffer, MONO_HLSB
 from machine import Pin
 
+from led_panel import LEDPanel
+
 # Init
-dmd = LEDPanel(
+led = LEDPanel(
   pe = Pin(14, Pin.OUT),
   pa = Pin(13, Pin.OUT),
   pb = Pin(12, Pin.OUT),
@@ -27,7 +28,7 @@ w = 32
 h = 16
 
 # FrameBuffer
-ba = bytearray((w * h) // 8)
+ba = bytearray((w * h) // 8) # 1 bpp
 fb = FrameBuffer(ba, w, h, MONO_HLSB)
 
 # Main code
@@ -41,11 +42,12 @@ def main():
     x = (x-1) % -96
     
     # Mandatory pause
-    await dmd.hold(50 / 1000) # msec
+    # Can be used as sleep
+    await led.hold(50 / 1000) # msec
 
 # Execute
 # Must be last
-dmd.run(ba, main)
+led.run(ba, main)
 ```
 
 The `hold()` function is a convenient utility for adding a mandatory asyncio pause without the need to import asyncio into the main code. It allows you to add a pause in seconds, including float, or leave it empty for the shortest possible pause.
