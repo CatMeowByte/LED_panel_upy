@@ -12,44 +12,44 @@ class LEDPanel():
         self.pdr = pdr
         self.pe = pe
         self.plat = plat
-        
+
         # PWM
         self.freq = freq
         self.duty = duty
         self._pwm = PWM(pe, freq=self.freq, duty=self.duty)
-        
+
         # SPI
         self._spi = SoftSPI(sck=self.pclk, mosi=self.pdr, miso=self.pe) # MISO is dummy
-        
+
         # Cache
         self._cache = [bytearray(16) for k in range(4)]
-    
+
     def _scanline(self, data):
         o = 0
         while 1:
+            # Write cache
+            self._spi.write(self._cache[o])
+
             # Disable PWM
             self._pwm.deinit()
             self.pe(0)
-            
-            # Write cache
-            self._spi.write(self._cache[o])
-            
+
             # Latch
             self.plat(1)
             self.plat(0)
-            
+
             # Row
             self.pa(o & 1)
             self.pb(o & 2)
-            
-            # Cache data
-            for i in range(16): self._cache[o][i] = ~data[((3-i)%4)*16+o*4+(i//4)]
-            
+
             # Reenable PWM
             self._pwm.init(freq=self.freq, duty=self.duty)
-            
+
+            # Cache data
+            for i in range(16): self._cache[o][i] = ~data[((3-i)%4)*16+o*4+(i//4)]
+
             o = (o+1) % 4
-            
+
             await aio.sleep(0)
 
     # Execute
